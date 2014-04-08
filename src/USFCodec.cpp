@@ -119,6 +119,8 @@ struct USFContext {
   int64_t len;
   int sample_rate;
   int64_t pos;
+  std::string title;
+  std::string artist;
 };
 
 int usf_load(void* ctx, const uint8_t*, size_t exe_size,
@@ -132,7 +134,7 @@ int usf_load(void* ctx, const uint8_t*, size_t exe_size,
 
 static void * psf_file_fopen( const char * uri )
 {
-  return  XBMC->OpenFile(uri, 0);
+  return XBMC->OpenFile(uri, 0);
 }
 
 static size_t psf_file_fread( void * buffer, size_t size, size_t count, void * handle )
@@ -247,27 +249,27 @@ static int psf_info_meta(void* context,
   USFContext* usf = (USFContext*)context;
   if (!strcasecmp(name, "length"))
     usf->len = parse_time_crap(value);
+  if (!strcasecmp(name, "title"))
+    usf->title = value;
+  if (!strcasecmp(name, "artist"))
+    usf->artist = value;
 }
              
 void* Init(const char* strFile, unsigned int filecache, int* channels,
            int* samplerate, int* bitspersample, int64_t* totaltime,
            int* bitrate, AEDataFormat* format, const AEChannel** channelinfo)
 {
-  int version = psf_load(strFile, &psf_file_system, 0, 0, 0, 0, 0, 0);
-  if (version <= 0)
-    return NULL;
-
   USFContext* result = new USFContext;
   result->pos = 0;
   result->state = new char[usf_get_state_size()];
   usf_clear(result->state);
-  if (psf_load(strFile, &psf_file_system, version, 0, 0, psf_info_meta, result, 0) <= 0)
+  if (psf_load(strFile, &psf_file_system, 0x21, 0, 0, psf_info_meta, result, 0) <= 0)
   {
     delete result->state;
     delete result;
     return NULL;
   }
-  if (psf_load(strFile, &psf_file_system, version, usf_load, result->state, 0, 0, 0) < 0)
+  if (psf_load(strFile, &psf_file_system, 0x21, usf_load, result->state, 0, 0, 0) < 0)
   {
     delete result->state;
     delete result;
@@ -338,7 +340,20 @@ bool DeInit(void* context)
 
 bool ReadTag(const char* strFile, char* title, char* artist, int* length)
 {
-  return false;
+  USFContext* usf = new USFContext;
+
+  if (psf_load(strFile, &psf_file_system, 0x21, 0, 0, psf_info_meta, usf, 0) <= 0)
+  {
+    delete usf;
+    return false;
+  }
+
+  strcpy(title, usf->title.c_str());
+  strcpy(artist, usf->artist.c_str());
+  *length = usf->len/1000;
+
+  delete usf;
+  return true;
 }
 
 int TrackCount(const char* strFile)

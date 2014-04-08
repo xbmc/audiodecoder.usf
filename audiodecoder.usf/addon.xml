@@ -11,6 +11,7 @@
     point="xbmc.audiodecoder"
     name="usf"
     extension=".miniusf"
+    tags="true"
     library_linux="audiodecoder.usf.so"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">USF Audio Decoder</summary>

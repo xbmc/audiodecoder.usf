@@ -293,6 +293,9 @@ int64_t Seek(void* context, int64_t time)
 
 bool DeInit(void* context)
 {
+  if (!context)
+    return true;
+
   USFContext* usf = (USFContext*)context;
   usf_shutdown(usf->state);
   delete[] usf->state;

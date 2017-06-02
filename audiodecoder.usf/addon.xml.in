@@ -5,7 +5,7 @@
   name="USF Audio Decoder"
   provider-name="spiff">
   <requires>
-    <import addon="kodi.audiodecoder" version="1.0.0"/>
+    @ADDON_DEPENDS@
   </requires>
   <extension
     point="kodi.audiodecoder"

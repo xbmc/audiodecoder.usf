@@ -8,7 +8,7 @@ enable_language(CXX)
 
 find_package(Kodi REQUIRED)
 
-include_directories(${KODI_INCLUDE_DIR}
+include_directories(${KODI_INCLUDE_DIR}/..
                     ${PROJECT_SOURCE_DIR}/lib/lazyusf
                     ${PROJECT_SOURCE_DIR}/lib/psflib)
 

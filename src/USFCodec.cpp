@@ -17,62 +17,18 @@
  *
  */
 
-#include "libXBMC_addon.h"
-#include "usf.h"
-#include "psflib.h"
+#include <kodi/addon-instance/AudioDecoder.h>
+#include <kodi/Filesystem.h>
 #include <iostream>
 
 extern "C" {
+#include "usf.h"
+#include "psflib.h"
 #include <stdio.h>
 #include <stdint.h>
 
-#include "kodi_audiodec_dll.h"
-
-ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
-
-ADDON_STATUS ADDON_Create(void* hdl, void* props)
-{
-  if (!XBMC)
-    XBMC = new ADDON::CHelper_libXBMC_addon;
-
-  if (!XBMC->RegisterMe(hdl))
-  {
-    delete XBMC, XBMC=NULL;
-    return ADDON_STATUS_PERMANENT_FAILURE;
-  }
-
-  return ADDON_STATUS_OK;
-}
-
-//-- Destroy ------------------------------------------------------------------
-// Do everything before unload of this add-on
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-void ADDON_Destroy()
-{
-  XBMC=NULL;
-}
-
-//-- GetStatus ---------------------------------------------------------------
-// Returns the current Status of this visualisation
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_GetStatus()
-{
-  return ADDON_STATUS_OK;
-}
-
-//-- SetSetting ---------------------------------------------------------------
-// Set a specific Setting value (called from XBMC)
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_SetSetting(const char *strSetting, const void* value)
-{
-  return ADDON_STATUS_OK;
-}
-
 struct USFContext {
-  char* state;
+  char* state = nullptr;
   int64_t len;
   int sample_rate;
   int64_t pos;
@@ -91,29 +47,39 @@ int usf_load(void* ctx, const uint8_t*, size_t exe_size,
 
 static void * psf_file_fopen( const char * uri )
 {
-  return XBMC->OpenFile(uri, 0);
+  kodi::vfs::CFile* file = new kodi::vfs::CFile;
+  if (!file->OpenFile(uri, 0))
+  {
+    delete file;
+    return nullptr;
+  }
+
+  return file;
 }
 
 static size_t psf_file_fread( void * buffer, size_t size, size_t count, void * handle )
 {
-  return XBMC->ReadFile(handle, buffer, size*count);
+  kodi::vfs::CFile* file = static_cast<kodi::vfs::CFile*>(handle);
+  return file->Read(buffer, size*count);
 }
 
 static int psf_file_fseek( void * handle, int64_t offset, int whence )
 {
-  return XBMC->SeekFile(handle, offset, whence) > -1?0:-1;
+  kodi::vfs::CFile* file = static_cast<kodi::vfs::CFile*>(handle);
+  return file->Seek(offset, whence) > -1 ? 0 : -1;
 }
 
 static int psf_file_fclose( void * handle )
 {
-  XBMC->CloseFile(handle);
+  delete static_cast<kodi::vfs::CFile*>(handle);
 
   return 0;
 }
 
 static long psf_file_ftell( void * handle )
 {
-  return XBMC->GetFilePosition(handle);
+  kodi::vfs::CFile* file = static_cast<kodi::vfs::CFile*>(handle);
+  return file->GetPosition();
 }
 
 const psf_file_callbacks psf_file_system =
@@ -215,115 +181,131 @@ static int psf_info_meta(void* context,
 
   return 0;
 }
-             
-void* Init(const char* strFile, unsigned int filecache, int* channels,
-           int* samplerate, int* bitspersample, int64_t* totaltime,
-           int* bitrate, AEDataFormat* format, const AEChannel** channelinfo)
-{
-  USFContext* result = new USFContext;
-  result->pos = 0;
-  result->state = new char[usf_get_state_size()];
-  usf_clear(result->state);
-  if (psf_load(strFile, &psf_file_system, 0x21, 0, 0, psf_info_meta, result, 0) <= 0)
-  {
-    delete result->state;
-    delete result;
-    return NULL;
-  }
-  if (psf_load(strFile, &psf_file_system, 0x21, usf_load, result->state, 0, 0, 0) < 0)
-  {
-    delete result->state;
-    delete result;
-    return NULL;
-  }
-  *totaltime = result->len;
-  usf_set_compare(result->state, 0);
-  usf_set_fifo_full(result->state, 0);
-  usf_set_hle_audio(result->state, 1);
-  static enum AEChannel map[3] = {
-    AE_CH_FL, AE_CH_FR, AE_CH_NULL
-  };
-  *format = AE_FMT_S16NE;
-  *channelinfo = map;
-  *channels = 2;
 
-  *bitspersample = 16;
-  *bitrate = 0.0;
-
-  int32_t srate;
-  usf_render(result->state, NULL, 0, &srate);
-  *samplerate = result->sample_rate = srate;
-
-  result->len = srate*4*(*totaltime)/1000;
-
-  return result;
 }
 
-int ReadPCM(void* context, uint8_t* pBuffer, int size, int *actualsize)
+class CUSFCodec : public kodi::addon::CInstanceAudioDecoder,
+                  public kodi::addon::CAddonBase
 {
-  USFContext* usf = (USFContext*)context;
-  if (usf->pos >= usf->len)
-    return 1;
-  if (usf_render(usf->state, (int16_t*)pBuffer, size/4, &usf->sample_rate))
-    return 1;
-  usf->pos += size;
-  *actualsize = size;
-  return 0;
-}
+public:
+  CUSFCodec(KODI_HANDLE instance) :
+    CInstanceAudioDecoder(instance) {}
 
-int64_t Seek(void* context, int64_t time)
-{
-  USFContext* usf = (USFContext*)context;
-  if (time*usf->sample_rate*4/1000 < usf->pos)
+  virtual ~CUSFCodec()
   {
-    usf_restart(usf->state);
-    usf->pos = 0;
-  }
-  
-  int64_t left = time*usf->sample_rate*4/1000-usf->pos;
-  while (left > 4096)
-  {
-    usf_render(usf->state, NULL, 1024, &usf->sample_rate);
-    usf->pos += 4096;
-    left -= 4096;
+    delete[] ctx.state;
   }
 
-  return usf->pos/(usf->sample_rate*4)*1000;
-}
+  virtual bool Init(const std::string& filename, unsigned int filecache,
+                    int& channels, int& samplerate,
+                    int& bitspersample, int64_t& totaltime,
+                    int& bitrate, AEDataFormat& format,
+                    std::vector<AEChannel>& channellist) override
+  {
+    ctx.pos = 0;
+    ctx.state = new char[usf_get_state_size()];
+    usf_clear(ctx.state);
+    if (psf_load(filename.c_str(), &psf_file_system, 0x21, 0, 0,
+                 psf_info_meta, &ctx, 0) <= 0)
+    {
+      delete ctx.state;
+      return false;
+    }
+    if (psf_load(filename.c_str(), &psf_file_system, 0x21, usf_load,
+                 ctx.state, 0, 0, 0) < 0)
+    {
+      delete ctx.state;
+      return false;
+    }
+    totaltime = ctx.len;
+    usf_set_compare(ctx.state, 0);
+    usf_set_fifo_full(ctx.state, 0);
+    usf_set_hle_audio(ctx.state, 1);
+    format = AE_FMT_S16NE;
+    channellist = { AE_CH_FL, AE_CH_FR };
+    channels = 2;
 
-bool DeInit(void* context)
-{
-  if (!context)
+    bitspersample = 16;
+    bitrate = 0.0;
+
+    int32_t srate;
+    usf_render(ctx.state, NULL, 0, &srate);
+    samplerate = ctx.sample_rate = srate;
+
+    ctx.len = srate*4*(totaltime)/1000;
+
     return true;
-
-  USFContext* usf = (USFContext*)context;
-  usf_shutdown(usf->state);
-  delete[] usf->state;
-  delete usf;
-
-  return true;
-}
-
-bool ReadTag(const char* strFile, char* title, char* artist, int* length)
-{
-  USFContext* usf = new USFContext;
-
-  if (psf_load(strFile, &psf_file_system, 0x21, 0, 0, psf_info_meta, usf, 0) <= 0)
-  {
-    delete usf;
-    return false;
   }
 
-  strcpy(title, usf->title.c_str());
-  strcpy(artist, usf->artist.c_str());
-  *length = usf->len/1000;
+  virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
+  {
+    if (ctx.pos >= ctx.len)
+      return 1;
+    if (usf_render(ctx.state, (int16_t*)buffer, size/4, &ctx.sample_rate))
+      return 1;
+    ctx.pos += size;
+    actualsize = size;
+    return 0;
+  }
 
-  delete usf;
-  return true;
-}
+  virtual int64_t Seek(int64_t time) override
+  {
+    if (time*ctx.sample_rate*4/1000 < ctx.pos)
+    {
+      usf_restart(ctx.state);
+      ctx.pos = 0;
+    }
 
-int TrackCount(const char* strFile)
+    int64_t left = time*ctx.sample_rate*4/1000-ctx.pos;
+    while (left > 4096)
+    {
+      usf_render(ctx.state, nullptr, 1024, &ctx.sample_rate);
+      ctx.pos += 4096;
+      left -= 4096;
+    }
+
+    return ctx.pos/(ctx.sample_rate*4)*1000;
+  }
+
+  virtual bool ReadTag(const std::string& file, std::string& title,
+                       std::string& artist, int& length) override
+  {
+    USFContext usf;
+    ctx.state = new char[usf_get_state_size()];
+    usf_clear(ctx.state);
+
+    if (psf_load(file.c_str(), &psf_file_system, 0x21, 0,
+                0, psf_info_meta, &usf, 0) <= 0)
+    {
+      return false;
+    }
+
+    title = usf.title;
+    artist = usf.artist;
+    length = usf.len/1000;
+
+    delete[] usf.state;
+    return true;
+  }
+
+private:
+  USFContext ctx;
+};
+
+
+class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
-  return 1;
-}
-}
+public:
+  CMyAddon() { }
+  virtual ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
+  {
+    addonInstance = new CUSFCodec(instance);
+    return ADDON_STATUS_OK;
+  }
+  virtual ~CMyAddon()
+  {
+  }
+};
+
+
+ADDONCREATOR(CMyAddon);

@@ -30,14 +30,13 @@ set(SOURCES audio.c
             rsp_hle/musyx.c
             rsp_hle/plugin.c)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-msse HAS_SSE)
 if(HAS_SSE)
   add_definitions(-DARCH_MIN_SSE2)
-else()
+elseif(NOT WIN32)
   add_definitions(-DARCH_MIN_ARM_NEON)
 endif()
 
+set(CMAKE_POSITION_INDEPENDENT_CODE 1)
 add_library(lazyusf STATIC ${SOURCES})

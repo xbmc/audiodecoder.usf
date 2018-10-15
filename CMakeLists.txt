@@ -21,9 +21,9 @@ set(USF_SOURCES src/USFCodec.cpp)
 
 set(DEPLIBS lazyusf psflib ${ZLIB_LIBRARIES})
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-msse HAS_SSE)
-if(HAS_SSE)
+include(CheckCXXSymbolExists)
+check_cxx_symbol_exists(__SSE2__ "" HAS_SSE2)
+if(HAS_SSE2)
   add_definitions(-DARCH_MIN_SSE2)
 else()
   add_definitions(-DARCH_MIN_ARM_NEON)

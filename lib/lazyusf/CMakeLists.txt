@@ -30,9 +30,9 @@ set(SOURCES audio.c
             rsp_hle/musyx.c
             rsp_hle/plugin.c)
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-msse HAS_SSE)
-if(HAS_SSE)
+include(CheckCXXSymbolExists)
+check_cxx_symbol_exists(__SSE2__ "" HAS_SSE2)
+if(HAS_SSE2)
   add_definitions(-DARCH_MIN_SSE2)
 elseif(NOT WIN32)
   add_definitions(-DARCH_MIN_ARM_NEON)

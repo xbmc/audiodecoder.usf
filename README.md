@@ -2,8 +2,8 @@
 
 This is a [Kodi](http://kodi.tv) audio decoder addon for USF files.
 
-[![Build Status](https://travis-ci.org/notspiff/audiodecoder.usf.svg?branch=master)](https://travis-ci.org/notspiff/audiodecoder.usf)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/notspiff/audiodecoder.usf?svg=true)](https://ci.appveyor.com/project/notspiff/audiodecoder-usf)
+[![Build Status](https://travis-ci.org/xbmc/audiodecoder.usf.svg?branch=master)](https://travis-ci.org/xbmc/audiodecoder.usf)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/xbmc/audiodecoder.usf?svg=true)](https://ci.appveyor.com/project/xbmc/audiodecoder-usf)
 
 ## Build instructions
 
@@ -17,7 +17,7 @@ The following instructions assume you will have built Kodi already in the `kodi-
 suggested by the README.
 
 1. `git clone https://github.com/xbmc/xbmc.git`
-2. `git clone https://github.com/notspiff/audiodecoder.usf.git`
+2. `git clone https://github.com/xbmc/audiodecoder.usf.git`
 3. `cd audiodecoder.usf && mkdir build && cd build`
 4. `cmake -DADDONS_TO_BUILD=audiodecoder.usf -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/kodi-build/addons -DPACKAGE_ZIP=1 ../../xbmc/cmake/addons`
 5. `make`

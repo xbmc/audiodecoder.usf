@@ -30,13 +30,13 @@ set(SOURCES audio.c
             rsp_hle/musyx.c
             rsp_hle/plugin.c)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE 1)
+add_library(lazyusf STATIC ${SOURCES})
+
 include(CheckCXXSymbolExists)
 check_cxx_symbol_exists(__SSE2__ "" HAS_SSE2)
 if(HAS_SSE2)
-  add_definitions(-DARCH_MIN_SSE2)
+  target_compile_definitions(lazyusf PUBLIC -DARCH_MIN_SSE2)
 elseif(NOT WIN32)
-  add_definitions(-DARCH_MIN_ARM_NEON)
+  target_compile_definitions(lazyusf PUBLIC -DARCH_MIN_ARM_NEON)
 endif()
-
-set(CMAKE_POSITION_INDEPENDENT_CODE 1)
-add_library(lazyusf STATIC ${SOURCES})

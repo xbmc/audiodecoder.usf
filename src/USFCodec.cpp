@@ -184,8 +184,7 @@ static int psf_info_meta(void* context,
 
 }
 
-class CUSFCodec : public kodi::addon::CInstanceAudioDecoder,
-                  public kodi::addon::CAddonBase
+class ATTRIBUTE_HIDDEN CUSFCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
   CUSFCodec(KODI_HANDLE instance) :

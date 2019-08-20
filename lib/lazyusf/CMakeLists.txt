@@ -1,8 +1,5 @@
+cmake_minimum_required(VERSION 3.5)
 project(lazyusf)
-
-enable_language(C)
-
-cmake_minimum_required(VERSION 2.6)
 
 set(SOURCES audio.c
             cpu.c
@@ -34,7 +31,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE 1)
 add_library(lazyusf STATIC ${SOURCES})
 
 include(CheckCXXSymbolExists)
-cmake_policy(SET CMP0056 NEW)
 set(CMAKE_REQUIRED_FLAGS -msse2)
 check_cxx_symbol_exists(__SSE2__ "" HAS_SSE2)
 if(HAS_SSE2)

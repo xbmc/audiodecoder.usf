@@ -204,14 +204,14 @@ public:
     ctx.pos = 0;
     ctx.state = new char[usf_get_state_size()];
     usf_clear(ctx.state);
-    if (psf_load(filename.c_str(), &psf_file_system, 0x21, 0, 0,
-                 psf_info_meta, &ctx, 0) <= 0)
+    if (psf_load(filename.c_str(), &psf_file_system, 0x21, nullptr, nullptr,
+                 psf_info_meta, &ctx, 0, nullptr, nullptr) <= 0)
     {
       delete ctx.state;
       return false;
     }
     if (psf_load(filename.c_str(), &psf_file_system, 0x21, usf_load,
-                 ctx.state, 0, 0, 0) < 0)
+                 ctx.state, nullptr, nullptr, 0, nullptr, nullptr) < 0)
     {
       delete ctx.state;
       return false;
@@ -273,8 +273,8 @@ public:
     ctx.state = new char[usf_get_state_size()];
     usf_clear(ctx.state);
 
-    if (psf_load(file.c_str(), &psf_file_system, 0x21, 0,
-                0, psf_info_meta, &usf, 0) <= 0)
+    if (psf_load(file.c_str(), &psf_file_system, 0x21, nullptr,
+                nullptr, psf_info_meta, &usf, 0, nullptr, nullptr) <= 0)
     {
       return false;
     }

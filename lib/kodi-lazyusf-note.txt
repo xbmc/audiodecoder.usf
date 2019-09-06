@@ -1,4 +1,2 @@
 lazyusf source from https://github.com/kode54/lazyusf
-Sync to e05ec87 (31 Mar 2014)
-
-On /lazyusf/rsp/vu/shuffle.h line 48 is "#include <emmintrin.h>" added
+Sync to 9b13557 (8 Apr 2014)

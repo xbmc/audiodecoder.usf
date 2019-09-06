@@ -14,8 +14,8 @@
     tags="true"
     library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">USF Audio Decoder</summary>
-    <description lang="en">USF Audio Decoder</description>
+    <summary lang="en">USF - Nintendo Ultra 64 Sound Format Decoder</summary>
+    <description lang="en">This is a decoder which adds support for playing (Ultra) Nintendo 64 Sound format (.USF/.MINIUSF) files.</description>
     <platform>@PLATFORM@</platform>
   </extension>
 </addon>

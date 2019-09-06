@@ -29,9 +29,9 @@ extern "C" {
 
 struct USFContext {
   char* state = nullptr;
-  int64_t len;
-  int sample_rate;
-  int64_t pos;
+  int64_t len = 0;
+  int sample_rate = 0;
+  int64_t pos = 0;
   std::string title;
   std::string artist;
 };
@@ -92,12 +92,13 @@ const psf_file_callbacks psf_file_system =
   psf_file_ftell
 };
 
-#define BORK_TIME 0xC0CAC01A
 static unsigned long parse_time_crap(const char *input)
 {
-  if (!input) return BORK_TIME;
+  if (!input)
+    return 0;
   int len = strlen(input);
-  if (!len) return BORK_TIME;
+  if (!len)
+    return 0;
   int value = 0;
   {
     int i;
@@ -105,7 +106,7 @@ static unsigned long parse_time_crap(const char *input)
     {
       if ((input[i] < '0' || input[i] > '9') && input[i] != ':' && input[i] != ',' && input[i] != '.')
       {
-        return BORK_TIME;
+        return 0;
       }
     }
   }
@@ -204,14 +205,8 @@ public:
     ctx.pos = 0;
     ctx.state = new char[usf_get_state_size()];
     usf_clear(ctx.state);
-    if (psf_load(filename.c_str(), &psf_file_system, 0x21, nullptr, nullptr,
-                 psf_info_meta, &ctx, 0, nullptr, nullptr) <= 0)
-    {
-      delete ctx.state;
-      return false;
-    }
     if (psf_load(filename.c_str(), &psf_file_system, 0x21, usf_load,
-                 ctx.state, nullptr, nullptr, 0, nullptr, nullptr) < 0)
+                 ctx.state, psf_info_meta, &ctx, 0, nullptr, nullptr) < 0)
     {
       delete ctx.state;
       return false;
@@ -238,9 +233,11 @@ public:
 
   virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
   {
-    if (ctx.pos >= ctx.len)
+    if (ctx.len > 0 && ctx.pos >= ctx.len)
       return 1;
     if (usf_render(ctx.state, (int16_t*)buffer, size/4, &ctx.sample_rate))
+      return 1;
+    if (CheckEndReached(buffer, size))
       return 1;
     ctx.pos += size;
     actualsize = size;
@@ -288,7 +285,39 @@ public:
   }
 
 private:
+  // Hack way function
+  // Looked at the test that most miniusf files give no length.
+  // In addition, in the libs was no way to get the length, also runs
+  // "usf_render" on without giving a sign reached the end.
+  //
+  // This checks the buffer described by usf, if it is zero, the end has
+  // been reached.
+  //
+  bool CheckEndReached(uint8_t* buffer, int size)
+  {
+    if (!m_firstRoundDone)
+    {
+      m_firstRoundDone = true;
+      return false;
+    }
+
+    if (buffer && buffer[0] == 0)
+    {
+      for (unsigned int i = 0; i < size; i++)
+      {
+        if (buffer[i] != 0)
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    return false;
+  }
+
   USFContext ctx;
+  bool m_firstRoundDone = false;
 };
 
 

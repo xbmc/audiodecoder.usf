@@ -3,7 +3,8 @@
 This is a [Kodi](https://kodi.tv) audio decoder addon for USF files.
 
 [![Build Status](https://travis-ci.org/xbmc/audiodecoder.usf.svg?branch=Matrix)](https://travis-ci.org/xbmc/audiodecoder.usf/branches)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/xbmc/audiodecoder.usf?branch=Matrix&svg=true)](https://ci.appveyor.com/project/xbmc/audiodecoder-usf?branch=Matrix)
+[![Build Status](https://dev.azure.com/teamkodi/binary-addons/_apis/build/status/xbmc.audiodecoder.usf?branchName=Matrix)](https://dev.azure.com/teamkodi/binary-addons/_build/latest?definitionId=18&branchName=Matrix)
+<!--- [![Build Status](https://ci.appveyor.com/api/projects/status/github/xbmc/audiodecoder.usf?branch=Matrix&svg=true)](https://ci.appveyor.com/project/xbmc/audiodecoder-usf?branch=Matrix) -->
 
 ## Build instructions
 

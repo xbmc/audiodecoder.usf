@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="audiodecoder.usf"
-  version="3.0.1"
+  version="3.0.2"
   name="USF Audio Decoder"
   provider-name="spiff">
   <requires>
@@ -14,10 +14,10 @@
     tags="true"
     library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">USF - Nintendo Ultra 64 Sound Format Decoder</summary>
-    <description lang="en">This is a decoder which adds support for playing (Ultra) Nintendo 64 Sound format (.USF/.MINIUSF) files.</description>
+    <summary lang="en_GB">USF - Nintendo Ultra 64 Sound Format Decoder</summary>
+    <description lang="en_GB">This is a decoder which adds support for playing (Ultra) Nintendo 64 Sound format (.USF/.MINIUSF) files.</description>
     <platform>@PLATFORM@</platform>
-    <license>GPL-2.0</license>
+    <license>GPL-2.0-or-later</license>
     <source>https://github.com/xbmc/audiodecoder.usf</source>
     <assets>
       <icon>icon.png</icon>

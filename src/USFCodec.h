@@ -23,9 +23,16 @@ extern "C"
     char* state = nullptr;
     int64_t len = 0;
     int sample_rate = 0;
+    int fade = 0;
     int64_t pos = 0;
     std::string title;
     std::string artist;
+    std::string game;
+    std::string genre;
+    std::string year;
+    std::string usfby;
+    std::string copyright;
+    std::string comment;
   };
 
 } /* extern "C" */

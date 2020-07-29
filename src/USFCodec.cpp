@@ -149,10 +149,24 @@ extern "C"
     USFContext* usf = (USFContext*)context;
     if (!strcasecmp(name, "length"))
       usf->len = parse_time_crap(value);
-    if (!strcasecmp(name, "title"))
+    else if (!strcasecmp(name, "fade"))
+      usf->fade = atoi(value);
+    else if (!strcasecmp(name, "title"))
       usf->title = value;
-    if (!strcasecmp(name, "artist"))
+    else if (!strcasecmp(name, "artist"))
       usf->artist = value;
+    else if (!strcasecmp(name, "game"))
+      usf->game = value;
+    else if (!strcasecmp(name, "genre"))
+      usf->genre = value;
+    else if (!strcasecmp(name, "year"))
+      usf->year = value;
+    else if (!strcasecmp(name, "usfby"))
+      usf->usfby = value;
+    else if (!strcasecmp(name, "copyright"))
+      usf->copyright = value;
+    else if (!strcasecmp(name, "comment"))
+      usf->comment = value;
 
     return 0;
   }
@@ -256,6 +270,11 @@ bool CUSFCodec::ReadTag(const std::string& filename, kodi::addon::AudioDecoderIn
 
   tag.SetTitle(usf.title);
   tag.SetArtist(usf.artist);
+  tag.SetAlbum(usf.game);
+  tag.SetGenre(usf.genre);
+  tag.SetReleaseDate(usf.year);
+  tag.SetComment(usf.comment);
+  tag.SetSamplerate(usf.sample_rate);
   tag.SetDuration(usf.len / 1000);
 
   delete[] usf.state;

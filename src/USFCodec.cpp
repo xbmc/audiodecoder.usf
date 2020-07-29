@@ -188,8 +188,8 @@ public:
   bool Init(const std::string& filename, unsigned int filecache,
             int& channels, int& samplerate,
             int& bitspersample, int64_t& totaltime,
-            int& bitrate, AEDataFormat& format,
-            std::vector<AEChannel>& channellist) override
+            int& bitrate, AudioEngineDataFormat& format,
+            std::vector<AudioEngineChannel>& channellist) override
   {
     ctx.pos = 0;
     ctx.state = new char[usf_get_state_size()];
@@ -204,8 +204,8 @@ public:
     usf_set_compare(ctx.state, 0);
     usf_set_fifo_full(ctx.state, 0);
     usf_set_hle_audio(ctx.state, 1);
-    format = AE_FMT_S16NE;
-    channellist = { AE_CH_FL, AE_CH_FR };
+    format = AUDIOENGINE_FMT_S16NE;
+    channellist = { AUDIOENGINE_CH_FL, AUDIOENGINE_CH_FR };
     channels = 2;
 
     bitspersample = 16;
@@ -252,22 +252,21 @@ public:
     return ctx.pos/(ctx.sample_rate*4)*1000;
   }
 
-  bool ReadTag(const std::string& file, std::string& title,
-               std::string& artist, int& length) override
+  bool ReadTag(const std::string& filename, kodi::addon::AudioDecoderInfoTag& tag) override
   {
     USFContext usf;
     ctx.state = new char[usf_get_state_size()];
     usf_clear(ctx.state);
 
-    if (psf_load(file.c_str(), &psf_file_system, 0x21, nullptr,
+    if (psf_load(filename.c_str(), &psf_file_system, 0x21, nullptr,
                 nullptr, psf_info_meta, &usf, 0, nullptr, nullptr) <= 0)
     {
       return false;
     }
 
-    title = usf.title;
-    artist = usf.artist;
-    length = usf.len/1000;
+    tag.SetTitle(usf.title);
+    tag.SetArtist(usf.artist);
+    tag.SetDuration(usf.len/1000);
 
     delete[] usf.state;
     return true;

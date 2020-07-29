@@ -15,6 +15,7 @@ add_subdirectory(lib/lazyusf)
 add_subdirectory(lib/psflib)
 
 set(USF_SOURCES src/USFCodec.cpp)
+set(USF_HEADERS src/USFCodec.h)
 
 set(DEPLIBS lazyusf psflib ${ZLIB_LIBRARIES})
 

@@ -30,6 +30,13 @@ set(SOURCES audio.c
 set(CMAKE_POSITION_INDEPENDENT_CODE 1)
 add_library(lazyusf STATIC ${SOURCES})
 
+include(CheckCCompilerFlag)
+check_c_compiler_flag(-mfpu=neon HAS_NEON)
+
+if(HAS_NEON)
+  target_compile_options(lazyusf PRIVATE -mfpu=neon)
+endif()
+
 include(CheckCXXSymbolExists)
 set(CMAKE_REQUIRED_FLAGS -msse2)
 check_cxx_symbol_exists(__SSE2__ "" HAS_SSE2)

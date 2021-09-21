@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - musyx.h                                         *
+ *   Mupen64plus - dbg_decoder.h                                           *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2013 Bobby Smiles                                       *
+ *   Copyright (C) 2010 Marshall B. Rogers <mbr@64.vg>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,12 +19,43 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MUSYX_H
-#define MUSYX_H
+#ifndef __DECODER_H__
+#define __DECODER_H__
 
-struct hle_t;
+#include "dbg_types.h"
 
-void musyx_v1_task(struct hle_t* hle);
-void musyx_v2_task(struct hle_t* hle);
-
+#if defined(WIN32)
+typedef unsigned int uint32_t;
+typedef unsigned char bool;
+#define false 0
+#define true 1
+#else
+#include <stdint.h>
+#include <stdbool.h>
 #endif
+
+/* Disassembler lookup handler */
+typedef char * (*r4k_lookup_func)(uint32_t, void *);
+
+/* Disassembler state */
+typedef
+struct r4k_dis_t
+{
+    r4k_lookup_func  lookup_sym;
+    void *           lookup_sym_d;
+    r4k_lookup_func  lookup_rel_hi16;
+    void *           lookup_rel_hi16_d;   
+    r4k_lookup_func  lookup_rel_lo16;
+    void *           lookup_rel_lo16_d;
+    
+    /* Private */
+    char * dest;
+    int length;
+}
+R4kDis;
+
+extern void r4300_decode_op ( uint32, char *, char *, int );
+
+
+#endif /* __DECODER_H__ */
+

@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - alist_internal.h                                *
+ *   Mupen64plus - dbg_types.h                                             *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2014 Bobby Smiles                                       *
+ *   Copyright (C) 2002 davFr                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,21 +19,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _MYSTDBOOL_H_
-#define _MYSTDBOOL_H_
+#ifndef __TYPES_H__
+#define __TYPES_H__
 
-#pragma once
+typedef unsigned char       uint8;
+typedef unsigned short      uint16;
+typedef unsigned int        uint32;
+typedef unsigned long long  uint64;
 
-typedef unsigned char my_bool;
-enum { my_b_false = 0 };
-enum { my_b_true  = 1 };
+#endif /* __TYPES_H__ */
 
-#undef bool
-#undef true
-#undef false
-
-#define bool my_bool
-#define true my_b_true
-#define false my_b_false
-
-#endif

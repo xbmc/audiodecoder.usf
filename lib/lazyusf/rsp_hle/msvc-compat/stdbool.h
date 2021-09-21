@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - cicx105.h                                       *
+ *   Mupen64plus-rsp-hle - stdbool.h                                       *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2012 Bobby Smiles                                       *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,12 +19,19 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef CICX105_H
-#define CICX105_H
+/* This header is only intended to be used with msvc compilers */
 
-struct hle_t;
+#pragma once
 
-void cicx105_ucode(struct hle_t* hle);
+typedef int _Bool;
 
-#endif
+/**
+ * The standard states that "an application may undefine and then possibly redefine the macro
+ * bool, true and false". However, such feature might be withdrawn in a future version.
+ **/
+#define bool _Bool
+#define true 1
+#define false 0
+
+#define __bool_true_false_are_defined 1
 

@@ -224,17 +224,17 @@ bool CUSFCodec::Init(const std::string& filename,
   return true;
 }
 
-int CUSFCodec::ReadPCM(uint8_t* buffer, int size, int& actualsize)
+int CUSFCodec::ReadPCM(uint8_t* buffer, size_t size, size_t& actualsize)
 {
   if (ctx.len > 0 && ctx.pos >= ctx.len)
-    return 1;
+    return AUDIODECODER_READ_EOF;
   if (usf_render(ctx.state, (int16_t*)buffer, size / 4, &ctx.sample_rate))
-    return 1;
+    return AUDIODECODER_READ_ERROR;
   if (CheckEndReached(buffer, size))
-    return 1;
+    return AUDIODECODER_READ_EOF;
   ctx.pos += size;
   actualsize = size;
-  return 0;
+  return AUDIODECODER_READ_SUCCESS;
 }
 
 int64_t CUSFCodec::Seek(int64_t time)
@@ -314,7 +314,7 @@ bool CUSFCodec::CheckEndReached(uint8_t* buffer, int size)
 
 //------------------------------------------------------------------------------
 
-class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
+class ATTR_DLL_LOCAL CMyAddon : public kodi::addon::CAddonBase
 {
 public:
   CMyAddon() = default;

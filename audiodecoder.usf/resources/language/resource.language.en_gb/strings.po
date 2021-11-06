@@ -23,3 +23,9 @@ msgstr ""
 msgctxt "Addon Description"
 msgid "This is a decoder which adds support for playing (Ultra) Nintendo 64 Sound format (.USF/.MINIUSF) files."
 msgstr ""
+
+#. Supported file extension description about ".miniusf"
+#: audiodecoder.usf/addon.xml.in
+msgctxt "#30100"
+msgid "Music file from a Nintendo 64 game; often loaded along with a corresponding .USFLIB file."
+msgstr ""

@@ -40,7 +40,7 @@ extern "C"
 class ATTR_DLL_LOCAL CUSFCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
-  CUSFCodec(KODI_HANDLE instance, const std::string& version);
+  CUSFCodec(const kodi::addon::IInstanceInfo& instance);
   virtual ~CUSFCodec();
 
   bool Init(const std::string& filename,

@@ -445,8 +445,8 @@ uint32_t r4300i_SB_VAddr ( usf_state_t * state, uint32_t VAddr, uint8_t Value ) 
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
-    if (address + (VAddr ^ 3) - (uintptr_t)state->N64MEM < state->RdramSize)
-        *(uint8_t *)(address + (VAddr ^ 3)) = Value;
+	if (address + (VAddr ^ 3) - (uintptr_t)state->N64MEM < state->RdramSize)
+        	*(uint8_t *)(address + (VAddr ^ 3)) = Value;
 
 	return 1;
 }
@@ -489,8 +489,8 @@ uint32_t r4300i_SH_VAddr ( usf_state_t * state, uint32_t VAddr, uint16_t Value )
 	address = state->TLB_Map[VAddr >> 12];
 
 	if (address == 0) { return 0; }
-    if (address + 1 + (VAddr ^ 2) - (uintptr_t)state->N64MEM < state->RdramSize)
-        *(uint16_t *)(address + (VAddr ^ 2)) = Value;
+	if (address + 1 + (VAddr ^ 2) - (uintptr_t)state->N64MEM < state->RdramSize)
+        	*(uint16_t *)(address + (VAddr ^ 2)) = Value;
 	return 1;
 }
 

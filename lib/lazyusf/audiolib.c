@@ -53,9 +53,9 @@ int alUnLink(usf_state_t * state, int paddr) {
 //	_asm int 3
 
 	if (element->next)
-        elementNext->prev = element->prev;
-    if (element->prev)
-        elementPrev->next = element->next;
+        	elementNext->prev = element->prev;
+	if (element->prev)
+        	elementPrev->next = element->next;
 	return 1;
 }
 

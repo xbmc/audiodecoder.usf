@@ -20,18 +20,18 @@ void StopEmulation(usf_state_t * state)
 
 void DisplayError (usf_state_t * state, char * Message, ...) {
 	va_list ap;
-    
-    size_t len = strlen( state->error_message );
-    
-    if ( len )
-        state->error_message[ len++ ] = '\n';
+
+	size_t len = strlen( state->error_message );
+
+	if ( len )
+		state->error_message[ len++ ] = '\n';
 
 	va_start( ap, Message );
 	vsprintf( state->error_message + len, Message, ap );
 	va_end( ap );
-    
-    state->last_error = state->error_message;
-    StopEmulation( state );
+
+	state->last_error = state->error_message;
+	StopEmulation( state );
 
 	//printf("Error: %s\n", Msg);
 }

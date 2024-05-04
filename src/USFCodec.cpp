@@ -298,7 +298,7 @@ bool CUSFCodec::CheckEndReached(uint8_t* buffer, int size)
 
   if (buffer && buffer[0] == 0)
   {
-    for (unsigned int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
       if (buffer[i] != 0)
       {

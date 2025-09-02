@@ -27,6 +27,7 @@
       <icon>icon.png</icon>
     </assets>
     <summary lang="af_ZA">USF - Nintendo Ultra 64 Klank Formaat Dekodeerder</summary>
+    <summary lang="bs_BA">USF - Dekoder zvučnog formata za Nintendo Ultra 64</summary>
     <summary lang="ca_ES">Descodificador USF - Nintendo Ultra 64 Sound Format</summary>
     <summary lang="da_DK">USF - Nintendo Ultra 64 lydformatafkoder</summary>
     <summary lang="de_DE">USF - Nintendo Ultra 64 Sound Format Decoder</summary>
@@ -40,6 +41,7 @@
     <summary lang="ru_RU">USF - декодер звукового формата Nintendo Ultra 64</summary>
     <summary lang="sv_SE">USF - Nintendo Ultra 64-ljudavkodare</summary>
     <summary lang="zh_CN">USF - 任天堂 Ultra64 声音格式解码器</summary>
+    <description lang="bs_BA">Ovo je dekoder koji dodaje podršku za reprodukciju datoteka u (Ultra) Nintendo 64 zvučnom formatu (.USF/.MINIUSF).</description>
     <description lang="ca_ES">Aquest és un descodificador que afegeix suport per reproduir fitxers (Ultra) Nintendo 64 Sound format (.USF/.MINIUSF).</description>
     <description lang="da_DK">Dette er en afkoder, der tilføjer understøttelse af afspilning af (Ultra) Nintendo 64 lydformat (.USF/.MINIUSF) filer.</description>
     <description lang="de_DE">Dies ist ein Decoder, der die Wiedergabe von (Ultra) Nintendo 64 Sound-Format-Dateien (.USF / .MINIUSF) unterstützt.</description>
